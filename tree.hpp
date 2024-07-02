@@ -14,9 +14,9 @@ protected:
 
 public:
 
-    Tree() : root(nullptr) {}
+    ParentTree() : root(nullptr) {}
 
-    Tree(Node<T>* root) : root(root) {}
+    ParentTree(Node<T>* root) : root(root) {}
 
     void add_root(Node<T>* node) {
         root = node;
@@ -41,7 +41,29 @@ public:
         return root;
     }
 
+    bfs_iterator<T> begin_bfs_scan() {
+        return bfs_iterator;
+    }
 
+    bfs_iterator<T> end_bfs_scan() {
+        return bfs_iterator(nullptr);
+    }
+
+    dfs_iterator<T> begin_dfs_scan() {
+        return dfs_iterator<T>(root);
+    }
+
+    dfs_iterator<T> end_dfs_scan() {
+        return dfs_iterator<T>(nullptr);
+    }
+
+    bfs_iterator<T> begin() {
+        return bfs_iterator<T>(root);
+    }
+
+    bfs_iterator<T> end() {
+        return bfs_iterator<T>(nullptr);
+    }
     
 
 };

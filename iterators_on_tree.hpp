@@ -17,8 +17,8 @@ public:
         }
     }
 
-    const T& operator*() {
-        return stack.top();
+    T& operator*() {
+        return stack.top()->value;
     }
 
      Node<T>* operator->() {
@@ -54,8 +54,8 @@ public:
         }
     }
 
-    const T& operator*() {
-        return queue.front();
+    T& operator*() {
+        return queue.front()->value;
     }
 
     Node<T>* operator->() {
@@ -93,7 +93,7 @@ public:
         }
     }
 
-    const T& operator*() {
+    T& operator*() {
         return stack.top()->value;
     }
 
@@ -131,7 +131,7 @@ public:
         }
     }
 
-    const T& operator*() {
+    T& operator*() {
         return stack.top()->value;
     }
 
@@ -170,7 +170,7 @@ public:
         }
     }
 
-    const T& operator*() {
+    T& operator*() {
         return stack.top()->value;
     }
 

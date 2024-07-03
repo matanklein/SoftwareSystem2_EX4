@@ -1,19 +1,20 @@
 # Compiler
 CXX := g++
 # Compiler flags
-CXXFLAGS := -std=c++17 -Wall -Wextra
+CXXFLAGS := -std=c++17 -Wall -Wextra -g
 # Target executable
-TARGET := tree
+TARGET := trees
 # Source files
 SRCS := Demo.cpp complex.cpp test.cpp TestCounter.cpp
-
-TESTS := Test.cpp TestCounter.cpp
 
 # Object files main
 OBJS := Demo.o complex.o test.o TestCounter.o
 
 # Default target
-all: $(TARGET)
+all: $(TARGET) test
+
+tree : $(TARGET)
+	./$(TARGET)
 
 # Linking
 $(TARGET): Demo.o complex.o tree.hpp node.hpp
@@ -23,22 +24,22 @@ $(TARGET): Demo.o complex.o tree.hpp node.hpp
 Demo.o: Demo.cpp complex.hpp tree.hpp node.hpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-complex.o: complex.cpp complex.hpp
+complex.o: complex.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-test.o: test.cpp test.hpp
+test.o: test.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-TestCounter.o: TestCounter.cpp TestCounter.hpp
+TestCounter.o: TestCounter.cpp 
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-test: test.o TestCounter.o
+test: test.o TestCounter.o complex.o
 	$(CXX) $(CXXFLAGS) $^ -o $@
 
 
 
 
 clean:
-	rm -f $(OBJS) $(TARGET) test $(TESTS)
+	rm -f *.o test $(TARGET)
 
-.PHONY: all clean test
+.PHONY: all clean test tree

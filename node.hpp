@@ -16,7 +16,12 @@ public:
 
     Node(T value) : value(value) {}
 
-    T get_value() const {
+    T get_value(){
+        return value;
+    }
+
+    const T get_value() const{
+        
         return value;
     }
 
@@ -30,6 +35,10 @@ public:
 
     size_t get_childrens() {
         return children.size();
+    }
+
+    const vector<Node<T>*>& get_children() const{
+        return children;
     }
 
 

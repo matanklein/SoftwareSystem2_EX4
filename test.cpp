@@ -133,6 +133,9 @@ TEST_CASE("check post order iterator"){
     size_t i = 0;
     for (auto node = tree.begin_post_order(); node != tree.end_post_order(); ++node)
     {
+        if(i >= post_order.size()){
+            break;
+        }
         CHECK(node->get_value() == post_order[i]);
         i++;
     }

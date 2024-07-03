@@ -8,6 +8,7 @@
 #include "node.hpp"
 #include "iterators_on_tree.hpp"
 #include <vector>
+#include <iostream>
 using namespace std;
 
 template <typename T, size_t K>

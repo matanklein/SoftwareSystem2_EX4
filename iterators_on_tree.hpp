@@ -112,11 +112,19 @@ class in_order_iterator
 public:
     in_order_iterator(Node<T> *root)
     {
-        Node<T> *current = root;
-        while (current != nullptr)
+        // push all the left children of the root
+        stck.push(nullptr);
+        while (root != nullptr)
         {
-            stck.push(current);
-            current = current->children[0];
+            stck.push(root);
+            if (root->get_childrens() > 0 && root->get_children().at(0) != nullptr)
+            { // has left child
+                root = root->get_children().at(0);
+            }
+            else
+            {
+                root = nullptr; // end the loop
+            }
         }
     }
 
@@ -134,12 +142,20 @@ public:
     {
         Node<T> *node = stck.top();
         stck.pop();
-        Node<T> *current = node->children[1];
-        while (current != nullptr)
+        // if the node has a right child, push it and all its left children
+        if (node->get_childrens() > 1 && node->get_children().at(1) != nullptr)
         {
-            stck.push(current);
-            current = current->children[0];
+            Node<T> *right_child = node->get_children().at(1);
+            stck.push(right_child);
+            // push all the left children of the right child
+            Node<T> *right_child_left_child = right_child;
+            while (right_child_left_child->get_childrens() > 0 && right_child_left_child->get_children().at(0) != nullptr)
+            {
+                right_child_left_child = right_child_left_child->get_children().at(0);
+                stck.push(right_child_left_child);
+            }
         }
+
         return *this;
     }
 
@@ -184,7 +200,7 @@ public:
         stck.pop();
         for (int i = node->children.size() - 1; i >= 0; i--)
         {
-            stck.push(node->children[(sie_t)i]);
+            stck.push(node->children[(size_t)i]);
         }
         return *this;
     }
@@ -203,66 +219,96 @@ public:
 template <typename T>
 class post_order_iterator
 {
-    stack<Node<T> *> stck;
-    vector<bool> visited;
+private:
+    vector<Node<T> *> post_order; // the post order of the tree
+    int index;                    // the index of the current node in the post order
 
 public:
-    post_order_iterator(Node<T> *root)
+    post_order_iterator(Node<T> *root) : index(-1)
     {
         if (root != nullptr)
         {
-            visited.push_back(false);
+            stack<Node<T> *> stck;
             stck.push(root);
+            Node<T> *prev = nullptr;
+
+            while (!stck.empty())
+            {
+                if (stck.top() == nullptr)
+                {
+                    stck.pop();
+                    continue;
+                }
+                Node<T> *current = stck.top();
+                // if we are going down the tree
+                if (prev == nullptr || (prev->get_childrens() > 0 && prev->get_children().at(0) == current) || (prev->get_childrens() > 1 && prev->get_children().at(1) == current))
+                {
+                    if (current->get_childrens() > 0 && current->get_children().at(0) != nullptr)
+                    {
+                        stck.push(current->get_children().at(0));
+                    }
+                    else if (current->get_childrens() > 1 && current->get_children().at(1) != nullptr)
+                    {
+                        stck.push(current->get_children().at(1));
+                    }
+                    else
+                    {
+                        post_order.push_back(current);
+                        stck.pop();
+                    }
+                }
+                else if (current->get_childrens() > 0 && prev == current->get_children().at(0))
+                {
+                    if (current->get_childrens() > 1 && current->get_children().at(1) != nullptr)
+                    { // has right child
+                        stck.push(current->get_children().at(1));
+                    }
+                    else
+                    {
+                        post_order.push_back(current);
+                        stck.pop();
+                    }
+                }
+                else if (current->get_childrens() > 1 && prev == current->get_children().at(1))
+                {
+                    post_order.push_back(current);
+                    stck.pop();
+                }
+                prev = current;
+            }
+
+            if (!post_order.empty())
+            {
+                index = 0;
+            }
         }
     }
 
     T &operator*()
     {
-        return stck.top()->value;
+        return post_order[index]->value;
     }
 
     Node<T> *operator->()
     {
-        return stck.top();
+        return post_order[index];
     }
 
     post_order_iterator &operator++()
     {
-        while (!stck.empty())
+        if (index >= 0 && index < (int)post_order.size())
         {
-            Node<T> *node = stck.top();
-            bool nodeVisited = visited.back();
-            stck.pop();
-            visited.pop_back();
-
-            if (nodeVisited)
-            {
-                // Node has been visited, return it
-                return *this;
-            }
-            else
-            {
-                // Mark the node as visited and push it back onto the stck
-                stck.push(node);
-                visited.push_back(true);
-
-                // Push all children onto the stck
-                for (size_t i = node->children.size(); i > 0; --i)
-                {
-                    stck.push(node->children[i - 1]);
-                    visited.push_back(false);
-                }
-            }
+            index++;
         }
         return *this;
     }
 
-    bool operator==(const post_order_iterator &other)
+    bool operator==(const post_order_iterator &other) const
     {
-        return stck.size() == other.stck.size();
+        return (index == other.index) && (post_order.size() == other.post_order.size());
     }
 
-    bool operator!=(const post_order_iterator &other)
+    bool operator!=(const post_order_iterator &other) const
     {
         return !(*this == other);
     }

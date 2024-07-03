@@ -1,3 +1,7 @@
+/**
+ * @author: matank214@gmail.com
+ */
+
 #ifndef COMPLEX_HPP
 #define COMPLEX_HPP
 

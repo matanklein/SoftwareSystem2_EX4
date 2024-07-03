@@ -1,3 +1,7 @@
+/**
+ * @author: matank214@gmail.com
+ */
+
 #ifndef NODE_HPP
 #define NODE_HPP
 
@@ -18,15 +22,6 @@ public:
 
     void add_child(Node<T>* child) {
         children.push_back(child);
-    }
-
-    void remove_child(Node<T>* child) {
-        for (int i = 0; i < children.size(); i++) {
-            if (children[i] == child) {
-                children.erase(children.begin() + i);
-                return;
-            }
-        }
     }
 
     void clear_children() {

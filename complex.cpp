@@ -1,3 +1,7 @@
+/**
+ * @author: matank214@gmail.com
+ */
+
 #include "complex.hpp"
 
 Complex::Complex() {

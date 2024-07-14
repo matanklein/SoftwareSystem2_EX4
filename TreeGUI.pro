@@ -1,24 +1,40 @@
-QT       += core gui
-
+QT += core gui widgets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+TARGET = main
+CONFIG   += console
+CONFIG   -= app_bundle
 
-# You can make your code fail to compile if it uses deprecated APIs.
-# In order to do so, uncomment the following line.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
+TEMPLATE = app
 
-SOURCES += \
-    main.cpp \
-    gui_qt.cpp
+HEADERS += node.hpp tree.hpp CustomEllipseItem.hpp complex.hpp
+SOURCES += main.cpp CustomEllipseItem.cpp complex.cpp
 
-HEADERS += \
-    gui_qt.h
+# Define a custom target to run the program with `make run`
+run.target = run
+run.commands = ./main
+run.depends = first # Depend on the first build target, ensuring the program is built before running
 
-FORMS += \
-    gui_qt.ui
+# Define a custom target to run the program with `make tree`
+tree.target = tree
+tree.commands = ./main
+tree.depends = first # Depend on the first build target, ensuring the program is built before running
 
-# Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+# Define a custom target to run the tests with `make test`  
+test.target = test
+test.commands = make -C tests run
+
+# Define a custom target to run the tests with `make valgrind`
+# we add qt to suppression list to avoid false positives
+valgrind.target = valgrind
+valgrind.commands = valgrind ./main --tool=memcheck -v --leak-check=full --show-leak-kinds=all --suppressions=qt.supp --error-exitcode=99
+valgrind.depends = first
+
+# Add the tree executable to the clean files
+QMAKE_CLEAN += main .qmake.stash test
+
+# Add the -std=c++2a flag to the C++ compiler
+QMAKE_CXXFLAGS += -std=c++2a -g
+
+# Add the custom targets to the list of extra targets
+QMAKE_EXTRA_TARGETS += run tree test valgrind

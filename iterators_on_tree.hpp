@@ -285,8 +285,8 @@ public:
     }
 
     T &operator*()
-    {
-        return post_order[index]->value;
+    {     
+        return post_order[index]->value;   
     }
 
     Node<T> *operator->()
